@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
 import com.game.simpleRPG.display.Display;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 public class Game implements Runnable {
 	
@@ -52,9 +51,6 @@ public class Game implements Runnable {
 	public int getBufferAmount() {
 		return this.bufferAmount;
 	}
-//	public void setBufferAmount(int bufferAmount) {
-//		this.bufferAmount = bufferAmount;
-//	}
 	
 	// ----------- CONSTRUCTOR --------------------- 
 	
@@ -68,17 +64,7 @@ public class Game implements Runnable {
 	private void update() {
 		
 	}
-	private void render() {
-//		bufferStrategy = getDisplay().getCanvas().getBufferStrategy();
-//		if (bufferStrategy == null) {
-//			display.getCanvas().createBufferStrategy(getBufferAmount());
-//			return;
-//		}
-//		graphics = getBufferStrategy().getDrawGraphics();
-//		graphics.fillRect(0, 0, getDisplay().getWidth(), getDisplay().getHeight());
-//		bufferStrategy.show();
-//		graphics.dispose();
-		
+	private void render() {		
 		setBufferStrategy(getDisplay().getCanvas().getBufferStrategy());
 		if (getBufferStrategy() == null) {
 			getDisplay().getCanvas().createBufferStrategy(getBufferAmount());
@@ -88,16 +74,13 @@ public class Game implements Runnable {
 		getGraphics().fillRect(0, 0, getDisplay().getWidth(), getDisplay().getHeight());
 		getBufferStrategy().show();
 		getGraphics().dispose();
-		System.out.println(getDisplay().getWidth());
-		System.out.println(getDisplay().getHeight());
 	}
 	public void run() {
-		render();
-//		while (getRunning()) {
-//			update();
-//			render();
-//		}
-//		stop();
+		while (getRunning()) {
+			update();
+			render();
+		}
+		stop();
 	}	
 	public synchronized void start() {
 		if(getRunning()){
@@ -112,7 +95,7 @@ public class Game implements Runnable {
 			return;
 		}
 		try {
-			thread.join();
+			getThread().join();
 		} catch(Exception e) {
 			System.out.println("Exception Caught: " + e);
 		}
