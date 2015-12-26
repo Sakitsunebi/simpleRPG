@@ -17,49 +17,10 @@ public class Game implements Runnable {
 	private Graphics graphics;
 	final int bufferAmount = 3;
 	
-	// ----------- SETTERS AND GETTERS -----------------
-	
-	private void setDisplay(Display display) {
-		this.display = display;
-	}
-	private Display getDisplay() {
-		return this.display;
-	}
-	private void setThread(Thread thread) {
-		this.thread = thread;
-	}
-	private Thread getThread() {
-		return this.thread;
-	}
-	private void setRunning(boolean running) {
-		this.running = running;
-	}
-	private boolean getRunning() {
-		return this.running;
-	}		
-	public BufferStrategy getBufferStrategy() {
-		return this.bufferStrategy;
-	}
-	public void setBufferStrategy(BufferStrategy bufferStrategy) {
-		this.bufferStrategy = bufferStrategy;
-	}
-	public Graphics getGraphics() {
-		return this.graphics;
-	}
-	public void setGraphics(Graphics graphics) {
-		this.graphics = graphics;
-	}
-	public int getBufferAmount() {
-		return this.bufferAmount;
-	}
-//	public void setBufferAmount(int bufferAmount) {
-//		this.bufferAmount = bufferAmount;
-//	}
-	
 	// ----------- CONSTRUCTOR --------------------- 
 	
 	public Game(String title, int width, int height) {
-		setDisplay(new Display(title, width, height));
+		this.display = new Display(title, width, height);
 		start();
 	}
 	
@@ -69,46 +30,35 @@ public class Game implements Runnable {
 		
 	}
 	private void render() {
-//		bufferStrategy = getDisplay().getCanvas().getBufferStrategy();
-//		if (bufferStrategy == null) {
-//			display.getCanvas().createBufferStrategy(getBufferAmount());
-//			return;
-//		}
-//		graphics = getBufferStrategy().getDrawGraphics();
-//		graphics.fillRect(0, 0, getDisplay().getWidth(), getDisplay().getHeight());
-//		bufferStrategy.show();
-//		graphics.dispose();
-		
-		setBufferStrategy(getDisplay().getCanvas().getBufferStrategy());
-		if (getBufferStrategy() == null) {
-			getDisplay().getCanvas().createBufferStrategy(getBufferAmount());
+		bufferStrategy = display.getCanvas().getBufferStrategy();
+		if (bufferStrategy == null) {
+			display.getCanvas().createBufferStrategy(3);
 			return;
 		}
-		setGraphics(getBufferStrategy().getDrawGraphics());		
-		getGraphics().fillRect(0, 0, getDisplay().getWidth(), getDisplay().getHeight());
-		getBufferStrategy().show();
-		getGraphics().dispose();
-		System.out.println(getDisplay().getWidth());
-		System.out.println(getDisplay().getHeight());
+		graphics = bufferStrategy.getDrawGraphics();
+		graphics.fillRect(0, 0, display.getWidth(), display.getHeight());
+		bufferStrategy.show();
+		graphics.dispose();
+		
 	}
 	public void run() {
-		render();
-//		while (getRunning()) {
-//			update();
-//			render();
-//		}
-//		stop();
+//		render();
+		while (running) {
+			update();
+			render();
+		}
+		stop();
 	}	
 	public synchronized void start() {
-		if(getRunning()){
+		if(running){
 			return;
 		}
-		setRunning(true);
-		setThread(new Thread(this));
-		getThread().start();
+		running = true;
+		thread = new Thread(this);
+		thread.start();
 	}
 	public synchronized void stop() {
-		if(!getRunning()){
+		if(!running){
 			return;
 		}
 		try {

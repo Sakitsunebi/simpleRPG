@@ -45,9 +45,9 @@ public class Display {
 	}
 	
 	public Display(String title, int width, int height) {
-		setTitle(title);
-		setWidth(width);
-		setHeight(height);		
+		this.title = title;
+		this.width = width;
+		this.height = height;		
 		init();		
 	}	
 	private void init() {
@@ -55,19 +55,19 @@ public class Display {
 		createCanvas();
 	}	
 	private void createDisplay() {
-		setFrame(new JFrame(getTitle()));
-		getFrame().setSize(getWidth(), getHeight());
-		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		getFrame().setResizable(false);
-		getFrame().setLocationRelativeTo(null);
-		getFrame().setVisible(true);		
+		this.frame = new JFrame(getTitle());
+		frame.setSize(getWidth(), getHeight());
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);		
 	}
 	private void createCanvas() {
-		setCanvas(new Canvas());
-		getCanvas().setPreferredSize(new Dimension(getWidth(), getHeight()));
-		getCanvas().setMaximumSize(new Dimension(getWidth(), getHeight()));
-		getCanvas().setMinimumSize(new Dimension(getWidth(), getWidth()));		
-		getFrame().add(getCanvas());
-		getFrame().pack();
+		this.canvas = new Canvas();
+		canvas.setPreferredSize(new Dimension(getWidth(), getHeight()));
+		canvas.setMaximumSize(new Dimension(getWidth(), getHeight()));
+		canvas.setMinimumSize(new Dimension(getWidth(), getWidth()));		
+		frame.add(getCanvas());
+		frame.pack();
 	}
 }
