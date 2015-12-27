@@ -105,14 +105,15 @@ public class Game implements Runnable {
 		// Clear
 		getGraphics().clearRect(getDisplayStartX(), getDisplayStartY(), getDisplay().getWidth(), getDisplay().getHeight());
 		//Start Draw		
-		getGraphics().drawImage(TileManager.stone, x, x, null);		
+		getGraphics().drawImage(TileManager.stone, x, 5, null);		
 		//End Draw
 		getBufferStrategy().show();
 		getGraphics().dispose();
 	}
 	public void run() {
 		int fps = 60;
-		double timePerTick = 1000000000 / fps;
+		int nanoSecond = 1000000000;
+		double timePerTick = nanoSecond / fps;
 		double delta = 0;
 		long now;
 		long lastTime = System.nanoTime();
@@ -129,7 +130,7 @@ public class Game implements Runnable {
 				ticks++;
 				delta--;
 			}
-			if(timer >= 1000000000){
+			if(timer >= nanoSecond){
 				System.out.println("Ticks: " + ticks);
 				ticks = 0;
 				timer = 0;
