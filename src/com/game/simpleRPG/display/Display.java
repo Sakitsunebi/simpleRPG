@@ -7,12 +7,13 @@ import javax.swing.JFrame;
 
 public class Display {
 	
+	//-------------- VARIABLES ----------------------------
 	private JFrame frame;
 	private Canvas canvas;
 	private String title;
 	private int width;
 	private int height;
-	
+	// ------------- SETTERS / GETTERS --------------------
 	private void setFrame(JFrame frame) {
 		this.frame = frame;
 	}
@@ -43,13 +44,14 @@ public class Display {
 	public int getHeight() {
 		return this.height;
 	}
-	
+	//------------- CONSTRUCTOR ---------------------------
 	public Display(String title, int width, int height) {
 		setTitle(title);
 		setWidth(width);
 		setHeight(height);		
 		init();		
-	}	
+	}
+	//------------- METHODS -------------------------------
 	private void init() {
 		createDisplay();
 		createCanvas();

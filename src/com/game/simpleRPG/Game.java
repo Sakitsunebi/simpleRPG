@@ -2,23 +2,32 @@ package com.game.simpleRPG;
 
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
 
 import com.game.simpleRPG.display.Display;
+import com.game.simpleRPG.graphics.ImageLoader;
+import com.game.simpleRPG.graphics.SpriteSheet;
+import com.game.simpleRPG.graphics.TileManager;
 
 public class Game implements Runnable {
 	
-	// ------------ VARIABLES ------------------------
+	// ------------ VARIABLES ---------------------------------------
 	
+	final int BUFFER_AMOUNT = 3;
+	final int DISPLAY_START_X = 0;
+	final int DISPLAY_START_Y = 0;
 	private Display display;
 	private Thread thread;
 	private boolean running = false;
 	private BufferStrategy bufferStrategy;
-	private Graphics graphics;
-	final int bufferAmount = 3;
+	private Graphics graphics;	
+	private BufferedImage testImage;
+	private SpriteSheet spriteSheet;
 	
-	// ----------- SETTERS AND GETTERS -----------------
+	// ----------- SETTERS AND GETTERS ------------------------------
 	
-	private void setDisplay(Display display) {
+ 	private void setDisplay(Display display) {
 		this.display = display;
 	}
 	private Display getDisplay() {
@@ -49,20 +58,42 @@ public class Game implements Runnable {
 		this.graphics = graphics;
 	}
 	public int getBufferAmount() {
-		return this.bufferAmount;
+		return this.BUFFER_AMOUNT;
 	}
-	
-	// ----------- CONSTRUCTOR --------------------- 
-	
+	private int getDisplayStartX() {
+		return this.DISPLAY_START_X;
+	}
+	private int getDisplayStartY() {
+		return this.DISPLAY_START_Y;
+	}
+	private BufferedImage getTestImage() {
+		return testImage;
+	}
+	private void setTestImage(BufferedImage bufferedImage) {
+		this.testImage = bufferedImage;
+	}
+	private SpriteSheet getSpriteSheet() {
+		return spriteSheet;
+	}
+	private void setSpriteSheet(SpriteSheet spriteSheet) {
+		this.spriteSheet = spriteSheet;
+	}
+	// ----------- CONSTRUCTOR ---------------------------------------
+		
 	public Game(String title, int width, int height) {
 		setDisplay(new Display(title, width, height));
+		setTestImage(ImageLoader.loadImage("/textures/spritesheet.png"));
+		setSpriteSheet(new SpriteSheet(testImage));
+		TileManager.init();
 		start();
 	}
 	
-	// ------------- METHODS ------------------------
+	// ------------ METHODS -------------------------------------------
+	
+	int x = 0;
 	
 	private void update() {
-		
+		x += 1;
 	}
 	private void render() {		
 		setBufferStrategy(getDisplay().getCanvas().getBufferStrategy());
@@ -71,14 +102,29 @@ public class Game implements Runnable {
 			return;
 		}
 		setGraphics(getBufferStrategy().getDrawGraphics());		
-		getGraphics().fillRect(0, 0, getDisplay().getWidth(), getDisplay().getHeight());
+		// Clear
+		getGraphics().clearRect(getDisplayStartX(), getDisplayStartY(), getDisplay().getWidth(), getDisplay().getHeight());
+		//Start Draw		
+		getGraphics().drawImage(TileManager.stone, x, x, null);		
+		//End Draw
 		getBufferStrategy().show();
 		getGraphics().dispose();
 	}
 	public void run() {
+		int fps = 60;
+		double timePerTick = 1000000000 / fps;
+		double delta = 0;
+		long now;
+		long lastTime = System.nanoTime();		
 		while (getRunning()) {
-			update();
-			render();
+			now = System.nanoTime();
+			delta += (now -lastTime) / timePerTick;
+			lastTime = now;
+			if(delta >= 1){
+				update();
+				render();
+				delta--;
+			}			
 		}
 		stop();
 	}	
@@ -97,7 +143,7 @@ public class Game implements Runnable {
 		try {
 			getThread().join();
 		} catch(Exception e) {
-			System.out.println("Exception Caught: " + e);
+			e.printStackTrace();
 		}
 	}
 }
