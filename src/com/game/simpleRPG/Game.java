@@ -3,12 +3,14 @@ package com.game.simpleRPG;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.util.concurrent.TimeUnit;
 
 import com.game.simpleRPG.display.Display;
 import com.game.simpleRPG.graphics.ImageLoader;
 import com.game.simpleRPG.graphics.SpriteSheet;
 import com.game.simpleRPG.graphics.TileManager;
+import com.game.simpleRPG.states.GameState;
+import com.game.simpleRPG.states.State;
+import com.game.simpleRPG.states.StateManager;
 
 public class Game implements Runnable {
 	
@@ -25,6 +27,10 @@ public class Game implements Runnable {
 	private BufferedImage testImage;
 	private SpriteSheet spriteSheet;
 	
+	// ----------- States -------------------------------------------
+	
+	private StateManager stateManager; 
+	
 	// ----------- SETTERS AND GETTERS ------------------------------
 	
  	private void setDisplay(Display display) {
@@ -34,6 +40,7 @@ public class Game implements Runnable {
 		return this.display;
 	}
 	private void setThread(Thread thread) {
+
 		this.thread = thread;
 	}
 	private Thread getThread() {
@@ -78,22 +85,33 @@ public class Game implements Runnable {
 	private void setSpriteSheet(SpriteSheet spriteSheet) {
 		this.spriteSheet = spriteSheet;
 	}
-	// ----------- CONSTRUCTOR ---------------------------------------
-		
+	private StateManager getStateManager() {
+		return this.stateManager;
+	}
+	private void setStateManager(StateManager state) {
+		this.stateManager = state;
+	}
+	// ----------- CONSTRUCTOR ---------------------------------------		
+	
 	public Game(String title, int width, int height) {
 		setDisplay(new Display(title, width, height));
 		setTestImage(ImageLoader.loadImage("/textures/spritesheet.png"));
 		setSpriteSheet(new SpriteSheet(testImage));
 		TileManager.init();
+		setStateManager(new StateManager());
+		getStateManager().setCurrentState(new GameState());
 		start();
 	}
 	
 	// ------------ METHODS -------------------------------------------
 	
-	int x = 0;
+//	int x = 0;
 	
 	private void update() {
-		x += 1;
+//		x += 1;
+		if (getStateManager().getCurrentState() != null) {
+			getStateManager().tick();
+		}
 	}
 	private void render() {		
 		setBufferStrategy(getDisplay().getCanvas().getBufferStrategy());
@@ -105,7 +123,10 @@ public class Game implements Runnable {
 		// Clear
 		getGraphics().clearRect(getDisplayStartX(), getDisplayStartY(), getDisplay().getWidth(), getDisplay().getHeight());
 		//Start Draw		
-		getGraphics().drawImage(TileManager.stone, x, 5, null);		
+//		getGraphics().drawImage(TileManager.stone, x, 5, null);
+		if (getStateManager().getCurrentState() != null) {
+			getStateManager().render(getGraphics());
+		}
 		//End Draw
 		getBufferStrategy().show();
 		getGraphics().dispose();
