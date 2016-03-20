@@ -49,7 +49,7 @@ public class Game implements Runnable {
 	private void setRunning(boolean running) {
 		this.running = running;
 	}
-	private boolean getRunning() {
+	private boolean isRunning() {
 		return this.running;
 	}		
 	public BufferStrategy getBufferStrategy() {
@@ -140,7 +140,7 @@ public class Game implements Runnable {
 		long lastTime = System.nanoTime();
 		long timer = 0;
 		int ticks = 0;
-		while (getRunning()) {
+		while (isRunning()) {
 			now = System.nanoTime();
 			delta += (now -lastTime) / timePerTick;
 			timer += now - lastTime;
@@ -160,20 +160,35 @@ public class Game implements Runnable {
 		stop();
 	}	
 	public synchronized void start() {
-		if(getRunning()){
+		
+		// If it's already running, return
+		if(isRunning()){
 			return;
 		}
+		
+		// Set running to true once we start the game
 		setRunning(true);
+		
+		// Initialize the thread and pass which class you want to run
+		// in this case, we want the Game class to be threaded
 		setThread(new Thread(this));
+		
+		// start() automaticall calls run()
 		getThread().start();
 	}
 	public synchronized void stop() {
-		if(!getRunning()){
+		
+		// If we're not running, return
+		if(!isRunning()){
 			return;
 		}
+		
+		// Otherwise, stop the game
 		try {
+			// join() kills threads
 			getThread().join();
 		} catch(Exception e) {
+			// Throw an exception of there is an error
 			e.printStackTrace();
 		}
 	}
